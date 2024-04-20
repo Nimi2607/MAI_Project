@@ -1,0 +1,172 @@
+import tkinter as tk
+
+class Train:
+    def __init__(self, train_number, source, destination, distance, traffic, maintenance, catering_rating,
+                 freight_rating, departure_time, arrival_time, halt_stations):
+        self.train_number = train_number
+        self.source = source
+        self.destination = destination
+        self.distance = distance
+        self.traffic = traffic
+        self.maintenance = maintenance
+        self.catering_rating = catering_rating
+        self.freight_rating = freight_rating
+        self.departure_time = departure_time
+        self.arrival_time = arrival_time
+        self.halt_stations = halt_stations
+
+    def print_halt_times(self):
+        halt_times = "\nHalt times for Train {}:\n".format(self.train_number)
+        halt_times += "{:<20} {:<10} {:<10} {:<15} {:<10}\n".format("Station", "Arrives", "Halt (min)", "Departs", "Day")
+        halt_times += "-" * 60 + "\n"
+        for station in self.halt_stations:
+            halt_times += "{:<20} {:<10} {:<10} {:<15} {:<10}\n".format(station['name'], station['arrives'],
+                                                                        station['halt_time'], station['departs'],
+                                                                        station['day'])
+        return halt_times
+
+    def print_train_details(self):
+        train_details = "\nTrain Details:\n"
+        train_details += "Source: {}\n".format(self.source)
+        train_details += "Destination: {}\n".format(self.destination)
+        train_details += "Total Distance: {} km\n".format(self.distance)
+        train_details += "Traffic: {}\n".format(self.traffic)
+        train_details += "Maintenance: {}\n".format(self.maintenance)
+        train_details += "Catering Rating: {}\n".format(self.catering_rating)
+        train_details += "Freight Rating: {}\n".format(self.freight_rating)
+        return train_details
+
+    def calculate_score(self):
+        # Define weights for different factors
+        distance_weight = 0.5
+        traffic_weight = 0.15
+        maintenance_weight = 0.1
+        catering_weight = 0.15
+        freight_weight = 0.1
+
+        # Normalize distance for scoring (inverse of actual distance)
+        normalized_distance = 1 / self.distance
+
+        # Calculate score based on weighted sum of factors
+        score = (distance_weight * normalized_distance +
+                 traffic_weight * (5 if self.traffic.lower() == "high" else
+                                   (3 if self.traffic.lower() == "medium" else 1)) +
+                 maintenance_weight * (5 if self.maintenance.lower() == "high" else
+                                       (3 if self.maintenance.lower() == "medium" else 1)) +
+                 catering_weight * self.catering_rating +
+                 freight_weight * self.freight_rating)
+        return score
+
+
+# Define trains with halt station details
+train1_stations = [
+    {"name": "Mumbai Central", "arrives": "17:10", "halt_time": "--", "departs": "17:10", "day": "1"},
+    {"name": "Borivali", "arrives": "17:33", "halt_time": "02:00", "departs": "17:35", "day": "1"},
+    {"name": "Vapi", "arrives": "18:55", "halt_time": "02:00", "departs": "18:57", "day": "1"},
+    {"name": "Valsad", "arrives": "19:17", "halt_time": "02:00", "departs": "19:19", "day": "1"},
+    {"name": "Surat", "arrives": "20:10", "halt_time": "05:00", "departs": "20:15", "day": "1"},
+    {"name": "Bharuch JN", "arrives": "20:53", "halt_time": "02:00", "departs": "20:55", "day": "1"},
+    {"name": "Vadodara JN", "arrives": "21:44", "halt_time": "10:00", "departs": "21:54", "day": "1"},
+    {"name": "Ratlam JN", "arrives": "01:13", "halt_time": "02:00", "departs": "01:15", "day": "2"},
+    {"name": "Kota JN", "arrives": "04:05", "halt_time": "10:00", "departs": "04:15", "day": "2"},
+    {"name": "Sawai Madhopur", "arrives": "05:23", "halt_time": "02:00", "departs": "05:25", "day": "2"},
+    {"name": "Mathura JN", "arrives": "07:53", "halt_time": "02:00", "departs": "07:55", "day": "2"},
+    {"name": "H Nizamuddin", "arrives": "09:43", "halt_time": "--", "departs": "09:43", "day": "2"}
+]
+
+train2_stations = [
+    {"name": "C Shivaji Mah T", "arrives": "16:00", "halt_time": "--", "departs": "16:00", "day": "1"},
+    {"name": "Kalyan JN", "arrives": "16:43", "halt_time": "02:00", "departs": "16:45", "day": "1"},
+    {"name": "Nashik Road", "arrives": "18:17", "halt_time": "02:00", "departs": "18:19", "day": "1"},
+    {"name": "Jalgaon JN", "arrives": "20:48", "halt_time": "02:00", "departs": "20:50", "day": "1"},
+    {"name": "Bhopal JN", "arrives": "01:55", "halt_time": "05:00", "departs": "02:00", "day": "2"},
+    {"name": "V LakshmibaiJhs", "arrives": "05:06", "halt_time": "05:00", "departs": "05:11", "day": "2"},
+    {"name": "Gwalior", "arrives": "06:09", "halt_time": "02:00", "departs": "06:11", "day": "2"},
+    {"name": "Agra Cantt", "arrives": "07:30", "halt_time": "02:00", "departs": "07:32", "day": "2"},
+    {"name": "H Nizamuddin", "arrives": "09:55", "halt_time": "--", "departs": "09:55", "day": "2"}
+]
+
+train3_stations = [
+    {"name": "Mumbai Central", "arrives": "17:00", "halt_time": "--", "departs": "17:00", "day": "1"},
+    {"name": "Borivali", "arrives": "17:22", "halt_time": "02:00", "departs": "17:24", "day": "1"},
+    {"name": "Surat", "arrives": "19:43", "halt_time": "05:00", "departs": "19:48", "day": "1"},
+    {"name": "Vadodara JN", "arrives": "21:06", "halt_time": "05:00", "departs": "21:16", "day": "1"},
+    {"name": "Ratlam JN", "arrives": "00:25", "halt_time": "03:00", "departs": "00:28", "day": "2"},
+    {"name": "Nagda JN", "arrives": "01:08", "halt_time": "02:00", "departs": "01:10", "day": "2"},
+    {"name": "Kota JN", "arrives": "03:15", "halt_time": "05:00", "departs": "03:20", "day": "2"},
+    {"name": "New Delhi", "arrives": "08:32", "halt_time": "--", "departs": "08:32", "day": "2"}
+]
+
+train4_stations = [
+    {"name": "Bandra Terminus", "arrives": "17:30", "halt_time": "--", "departs": "17:30", "day": "1"},
+    {"name": "Borivali", "arrives": "17:55", "halt_time": "04:00", "departs": "17:59", "day": "1"},
+    {"name": "Surat", "arrives": "20:50", "halt_time": "02:00", "departs": "20:52", "day": "1"},
+    {"name": "Vadodara JN", "arrives": "22:19", "halt_time": "10:00", "departs": "22:29", "day": "1"},
+    {"name": "Ratlam JN", "arrives": "01:48", "halt_time": "05:00", "departs": "01:53", "day": "2"},
+    {"name": "Kota JN", "arrives": "04:35", "halt_time": "05:00", "departs": "04:40", "day": "2"},
+    {"name": "H Nizamuddin", "arrives": "10:15", "halt_time": "--", "departs": "10:15", "day": "2"}
+]
+
+
+# Create Train objects
+train1 = Train(1, "Mumbai", "H Nizamuddin", 1386, "High", "Moderate", 6.5, 4.5, "16:00", "09:43", train1_stations)
+train2 = Train(2, "C Shivaji Mah T", "H Nizamuddin", 1576, "Low", "Low", 5.8, 6.5, "15:45", "09:55", train2_stations)
+train3 = Train(3, "Mumbai Central", "New Delhi", 1384, "Medium", "Moderate", 7.7, 7.3, "16:00", "08:32", train3_stations)
+train4 = Train(4, "Bandra Terminus", "H Nizamuddin", 1379, "Low", "Moderate", 7.9, 6.5, "17:30", "10:15", train4_stations)
+
+# Get user input for source and destination
+source = input("Enter source station: ").strip()
+destination = input("Enter destination station: ").strip()
+
+# Check if source and destination exist in any train
+source_found = False
+destination_found = False
+for train in [train1, train2, train3, train4]:
+    if source.lower() in train.source.lower():
+        source_found = True
+    if destination.lower() in train.destination.lower():
+        destination_found = True
+
+# If both source and destination are found, proceed with recommendation
+if source_found and destination_found:
+    # Calculate scores for all trains
+    for train in [train1, train2, train3, train4]:
+        train.score = train.calculate_score()
+
+    # Recommend train based on highest score
+    recommended_train = max([train1, train2, train3, train4], key=lambda x: x.score)
+
+    # Create GUI window
+    window = tk.Tk()
+    window.title("Train Recommendation")
+
+    # Create a text widget for displaying train details with scrolling
+    text = tk.Text(window, wrap=tk.WORD)
+    text.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+    # Create a scrollbar and associate it with the text widget
+    scrollbar = tk.Scrollbar(window, command=text.yview)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    text.config(yscrollcommand=scrollbar.set)
+
+    # Display train recommendation
+    text.insert(tk.END, "Train Recommendation:\n")
+    text.insert(tk.END, "Train {} is recommended based on distance, traffic, maintenance, catering, and freight ratings.\n".format(recommended_train.train_number))
+    text.insert(tk.END, "Calculated Score: {:.2f}\n\n".format(recommended_train.score))
+
+    # Display train details for all trains
+    for train in [recommended_train, train1, train2, train3, train4]:
+        text.insert(tk.END, train.print_halt_times())
+        text.insert(tk.END, train.print_train_details())
+        text.insert(tk.END, "\n\n")
+
+    def on_configure(event):
+        text.configure(font=("Arial", int(window.winfo_width() / 60)))
+        text.tag_configure("center", justify="center")
+        text.tag_add("center", "1.0", "end")
+
+    window.bind("<Configure>", on_configure)
+
+    window.mainloop()
+else:
+    print("No records found for the provided source and/or destination.")
